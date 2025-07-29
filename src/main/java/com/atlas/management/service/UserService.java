@@ -4,6 +4,8 @@ import com.atlas.management.entity.User;
 import com.atlas.management.exception.UserNotFoundException;
 import com.atlas.management.repository.UserRepository;
 
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
+
+        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
         return userRepository.save(user);
     }
 
@@ -40,5 +46,14 @@ public class UserService {
     public User getUserByEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
             .orElseThrow(() -> new UserNotFoundException("Bu e-posta adresiyle kayıtlı kullanıcı yok: " + userEmail));
+    }
+    public User login(String email, String rawPassword) {
+        User user = getUserByEmail(email);
+
+        if (!passwordEncoder.matches(rawPassword, user.getEncryptedPassword())) {
+            throw new IllegalArgumentException("Şifre hatalı!");
+        }
+
+        return user;
     }
 }

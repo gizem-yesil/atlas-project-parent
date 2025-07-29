@@ -23,11 +23,7 @@ public class AuthRestController {
     @PostMapping("/login")
     public String login(@RequestBody User loginRequest) {
         User user = userService.getUserByEmail(loginRequest.getUserEmail());
-        if (user != null && user.getUserPassword().equals(loginRequest.getUserPassword())) {
-            return "Login başarılı!";
-        } else {
-            return "Geçersiz email veya şifre!";
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Şifre hatalı!");
         }
-    }
-
 }
