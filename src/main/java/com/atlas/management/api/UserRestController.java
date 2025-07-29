@@ -10,15 +10,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "*") // Frontend erişimi için CORS ayarı (gerekirse sınırlandırabiliriz)
+
 public class UserRestController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
+
 
    @GetMapping("/")
     public List<User> getAllUsers() {

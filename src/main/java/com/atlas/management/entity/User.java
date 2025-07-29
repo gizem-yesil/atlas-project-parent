@@ -19,4 +19,9 @@ public class User {
     private String userEmail;
 
 
+    public User orElse(Object o) {
+        return this;
+    }
+
+
 }
