@@ -1,4 +1,5 @@
 package com.atlas.management.api;
+import com.atlas.management.entity.LoginDto;
 import com.atlas.management.entity.User;
 import com.atlas.management.service.UserService;
 import com.atlas.management.util.JwtTokenUtil;
@@ -31,10 +32,13 @@ public class AuthRestController {
 
     }
 
-    @GetMapping("/login")
+    @PostMapping ("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
         User user = userService.getUserByEmail(loginRequest.getUserEmail());
 
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Kullanıcı bulunamadı!");
+        }
         if (!passwordEncoder.matches(loginRequest.getUserPassword(), user.getUserPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Şifre hatalı!");
         }
@@ -43,4 +47,22 @@ public class AuthRestController {
 
         return ResponseEntity.ok().body(token);
     }
+
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token gerekli");
+        }
+
+        String token = authHeader.substring(7);
+
+        if (jwtTokenUtil.validateToken(token)) {
+            String email = jwtTokenUtil.getEmailFromToken(token);
+            return ResponseEntity.ok("Token geçerli. Kullanıcı: " + email);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token geçersiz veya süresi dolmuş");
+        }
+    }
+
 }
