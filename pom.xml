@@ -78,8 +78,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.30</version> <!-- en güncel versiyonu kullanabilirsin -->
+            <scope>provided</scope>
         </dependency>
+
 
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
