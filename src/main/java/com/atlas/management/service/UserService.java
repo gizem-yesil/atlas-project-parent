@@ -1,6 +1,7 @@
 package com.atlas.management.service;
 
 import com.atlas.management.entity.User;
+import com.atlas.management.entity.UserDto;
 import com.atlas.management.exception.UserNotFoundException;
 import com.atlas.management.repository.UserRepository;
 
@@ -8,6 +9,8 @@ import com.atlas.management.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -26,15 +29,27 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
+    /*public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
+    }*/
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
 
+        return users.stream()
+                .map(user -> new UserDto(user.getId(), user.getUserName(), user.getUserEmail()))
+                .collect(Collectors.toList());
+    }
 
     public User getUserById(String id) {
         return userRepository.findById(id)
              .orElseThrow(() -> new UserNotFoundException("Kullanıcı bulunamadı: " + id));
 
+    }
+    public UserDto getUserDtoById(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserDto(user.getId(), user.getUserName(), user.getUserEmail());
     }
 
 
