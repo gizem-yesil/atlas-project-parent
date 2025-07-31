@@ -1,18 +1,17 @@
 package com.atlas.management.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
 @Entity
 @Data
 @Table(name= "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false)
+    private String encryptedPassword;
     private String id;
     private String userName;
     private String userPassword;
