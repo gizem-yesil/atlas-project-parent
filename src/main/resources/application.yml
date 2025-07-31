@@ -1,3 +1,8 @@
+
+jwt:
+  secret: "b8317131bd7bd8775fb9d8f330693ee497a5c7f052f0090fa7744dbef1462f2e"
+  expiration: 3600000
+
 spring:
   profiles:
     active: auto-db-create
@@ -74,9 +79,6 @@ application:
       expiration: 31536000000
       refresh-token:
         expiration: 31536000000
-
-
-
 
   #logging:
   #  level:

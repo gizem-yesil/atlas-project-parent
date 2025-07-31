@@ -16,11 +16,13 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
 
-        user.setEncryptedPassword(passwordEncoder.encode(user.getEncryptedPassword()));
+        user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+
         return userRepository.save(user);
     }
 
@@ -50,7 +52,7 @@ public class UserService {
     public User login(String email, String rawPassword) {
         User user = getUserByEmail(email);
 
-        if (!passwordEncoder.matches(rawPassword, user.getEncryptedPassword())) {
+        if (!passwordEncoder.matches(rawPassword, user.getUserPassword())) {
             throw new IllegalArgumentException("Şifre hatalı!");
         }
 

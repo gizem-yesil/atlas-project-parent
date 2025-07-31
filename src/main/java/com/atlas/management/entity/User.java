@@ -11,16 +11,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
-    private String encryptedPassword;
     private String id;
+
+    @Column(nullable = true)
     private String userName;
-    private String userPassword;
+
+    @Column(nullable = false)
+    private String userPassword; // Bcrypt ile hashlenecek
+
+    @Column(nullable = false)
     private String userEmail;
-
-
-    public User orElse(Object o) {
-        return this;
-    }
-
 
 }
