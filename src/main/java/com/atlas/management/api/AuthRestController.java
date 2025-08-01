@@ -1,6 +1,7 @@
 package com.atlas.management.api;
 import com.atlas.management.entity.Role;
 import com.atlas.management.entity.User;
+import com.atlas.management.exception.UserNotFoundException;
 import com.atlas.management.service.UserService;
 import com.atlas.management.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +33,24 @@ public class AuthRestController {
 
     }
 
-    @PostMapping ("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
-        User user = userService.getUserByEmail(loginRequest.getUserEmail());
+        try {
+            User user = userService.getUserByEmail(loginRequest.getUserEmail());
 
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Kullanıcı bulunamadı!");
+            if (!passwordEncoder.matches(loginRequest.getUserPassword(), user.getUserPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Şifre hatalı!");
+            }
+
+            String token = jwtTokenUtil.generateToken(user.getUserEmail(), user.getRole().name());
+
+            return ResponseEntity.ok().body(token);
+
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
         }
-        if (!passwordEncoder.matches(loginRequest.getUserPassword(), user.getUserPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Şifre hatalı!");
-        }
-
-        String token = jwtTokenUtil.generateToken(user.getUserEmail(), user.getRole().name());
-
-        return ResponseEntity.ok().body(token);
     }
+
     @PostMapping("/login/make-admin/{id}")
     public String makeAdmin(@PathVariable String id) {
         User user = userService.getUserById(id);

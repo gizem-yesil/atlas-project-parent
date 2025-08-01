@@ -64,9 +64,11 @@ public class UserService {
     }
 
     public User getUserByEmail(String userEmail) {
-        return userRepository.findByUserEmail(userEmail)
-            .orElseThrow(() -> new UserNotFoundException("Bu e-posta adresiyle kayıtlı kullanıcı yok: " + userEmail));
+        String cleanedEmail = userEmail.trim().toLowerCase();
+        return userRepository.findByUserEmailIgnoreCase(cleanedEmail)
+                .orElseThrow(() -> new UserNotFoundException("Bu e-posta adresiyle kayıtlı kullanıcı yok: " + userEmail));
     }
+
     public User login(String email, String rawPassword) {
         User user = getUserByEmail(email);
 
