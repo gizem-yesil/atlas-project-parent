@@ -15,11 +15,6 @@ import java.util.List;
         @Autowired
         private UniversityService universityService;
 
-        @PostMapping("/ekle")
-        public University create(@RequestBody University university) {
-            return universityService.createUniversity(university);
-        }
-
         @GetMapping
         public List<University> getAll() {
             return universityService.getAllUniversities();
@@ -30,9 +25,6 @@ import java.util.List;
             return universityService.getUniversityById(id);
         }
 
-        @DeleteMapping("/{id}")
-        public void delete(@PathVariable String id) {
-            universityService.deleteUniversity(id);
-    }
+
 
 }

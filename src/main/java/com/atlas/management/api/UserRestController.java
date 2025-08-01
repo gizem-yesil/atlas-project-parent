@@ -18,7 +18,6 @@ public class UserRestController {
     private UserService userService;
 
 
-
    @GetMapping("/")
     public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
