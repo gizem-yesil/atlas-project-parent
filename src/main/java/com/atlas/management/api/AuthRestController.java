@@ -1,5 +1,5 @@
 package com.atlas.management.api;
-import com.atlas.management.entity.LoginDto;
+import com.atlas.management.entity.Role;
 import com.atlas.management.entity.User;
 import com.atlas.management.service.UserService;
 import com.atlas.management.util.JwtTokenUtil;
@@ -43,11 +43,17 @@ public class AuthRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Şifre hatalı!");
         }
 
-        String token = jwtTokenUtil.generateToken(user.getUserEmail());
+        String token = jwtTokenUtil.generateToken(user.getUserEmail(), user.getRole().name());
 
         return ResponseEntity.ok().body(token);
     }
-
+    @PostMapping("/login/make-admin/{id}")
+    public String makeAdmin(@PathVariable String id) {
+        User user = userService.getUserById(id);
+        user.setRole(Role.ADMIN);
+        userService.updateUser(user);
+        return "Kullanıcı artık admin.";
+    }
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {

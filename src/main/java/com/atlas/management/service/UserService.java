@@ -1,5 +1,6 @@
 package com.atlas.management.service;
 
+import com.atlas.management.entity.Role;
 import com.atlas.management.entity.User;
 import com.atlas.management.entity.UserDto;
 import com.atlas.management.exception.UserNotFoundException;
@@ -25,6 +26,8 @@ public class UserService {
     public User createUser(User user) {
 
         user.setUserPassword(passwordEncoder.encode(user.getUserPassword()));
+
+            user.setRole(Role.USER); //
 
         return userRepository.save(user);
     }
@@ -73,4 +76,12 @@ public class UserService {
 
         return user;
     }
+
+    public User updateUser(User user) {
+        if (!userRepository.existsById(user.getId())) {
+            throw new UserNotFoundException("Güncellenecek kullanıcı bulunamadı: " + user.getId());
+        }
+        return userRepository.save(user);
+    }
+
 }

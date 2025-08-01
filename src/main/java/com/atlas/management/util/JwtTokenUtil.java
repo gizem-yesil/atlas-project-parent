@@ -1,13 +1,18 @@
 package com.atlas.management.util;
 
-
+import com.atlas.management.entity.User;
+import com.atlas.management.entity.Role;
+import com.atlas.management.repository.UserRepository;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-    @Component
+@Component
     public class JwtTokenUtil {
 
         @Value("${jwt.secret}")
@@ -16,9 +21,12 @@ import java.util.Date;
         @Value("${jwt.expiration}")
         private long jwtExpirationMs;
 
-        public String generateToken(String email) {
+
+        public String generateToken(String email,String role) {
+
             return Jwts.builder()
                     .setSubject(email)
+                    .claim("role", role)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                     .signWith(SignatureAlgorithm.HS256, jwtSecret)
@@ -37,4 +45,18 @@ import java.util.Date;
                 return false;
             }
         }
+
+
+    public String getRoleFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
+
+
+
+
+
+}
